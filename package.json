@@ -8,11 +8,11 @@
   "bin": "./bin/cli.js",
   "author": "zhaolongfei",
   "license": "ISC",
-  "devDependencies": {
+  "dependencies": {
     "chalk": "^2.4.2",
     "commander": "^3.0.0",
     "download-git-repo": "^2.0.0",
-    "fs": "0.0.2",
+    "fs": "0.0.1-security",
     "glob": "^7.1.4",
     "inquirer": "^6.5.1",
     "ora": "^3.4.0",
