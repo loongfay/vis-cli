@@ -1,16 +1,14 @@
 /**
- * @file activity module
- * @author zhaolongfei
+ * @file store
+ * @author who
  */
 
 import {getPageData} from '../common/lib/api/common';
 
-/*eslint-disable*/
-
+/* eslint-disable */
 const state = {
     tplData: {},
-    loaded: false,
-    baseLog: {}
+    loaded: false
 };
 
 const getters = {};
@@ -33,7 +31,6 @@ const mutations = {
     update(state, data) {
         state.tplData = data.tplData;
         state.loaded = true;
-        state.baseLog = data.extData && data.extData.baseLog;
     },
     destroy(state) {
         state.loaded = false;
@@ -47,3 +44,4 @@ export default {
     actions,
     mutations
 };
+/* eslint-enable */

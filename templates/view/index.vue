@@ -4,6 +4,10 @@
 </template>
 
 <script>
+/**
+ * @file index
+ * @author who
+ */
 import {mapGetters, mapState, mapActions} from 'vuex';
 
 export default {
@@ -19,6 +23,7 @@ export default {
     watch: {
     },
     methods: {
+        ...mapActions('', ['enter', 'leave'])
     },
     beforeCreate() {
         this.$store.registerModule('', require('./store').default);
@@ -34,9 +39,9 @@ export default {
     },
     destroyed() {
         this.leave();
-        this.$store.unregisterModule('facefate');           
+        this.$store.unregisterModule('facefate');
     }
-}
+};
 </script>
 
 <style lang="less">

@@ -1,5 +1,5 @@
 /**
- * @file name
+ * @file page.js
  * @author who
 **/
 
@@ -9,7 +9,5 @@ M.card.register(
     [''],
     function (dep) {
         var $card = this.container;
-
-        
     }
 );

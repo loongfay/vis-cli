@@ -1,11 +1,16 @@
 <template>
     <c-base></c-base>
 </template>
+
 <script type="config">
 {
     props: {
     },
     data: {
+        cardName: 'c-cardname'
+    },
+    computed: {
+        classPrefix: 'graph-' + cardName
     },
     components: {
         'c-base': '../common/component/base'
@@ -14,11 +19,15 @@
 </script>
 
 <script>
+/**
+ * @file index
+ * @author who
+ */
 export default {
     methods: {
     },
     created() {
-    }
+    },
     mounted() {
     },
     beforedestroy() {
