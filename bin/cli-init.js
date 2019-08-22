@@ -1,113 +1,87 @@
 #!/usr/bin/env node
 
-const program = require('commander');
-const path = require('path');
 const fs = require('fs');
-const glob = require('glob');
-const download = require('../lib/download');
 const inquirer = require('inquirer');
+const ora = require('ora');
 const chalk = require('chalk');
+const child_process = require('child_process');
+const root = process.cwd();
 
-program.usage('<project-name>').parse(process.argv);
-
-const input = program.args[0];
-
-if (!input) {
-    program.help();
-    return;
-}
-
-const [moduleName, projectName] = input.split('/');
-
-// console.log(moduleName, projectName);
-
-if (!['card', 'atom-card', 'view'].includes(moduleName) || !projectName) {
-    program.help();
-    return;
-}
-
-const currPath = process.cwd();
-const rootDir = path.basename(currPath);
-const list = glob.sync('*');
-
-// console.log(projectName, list);
-
-let next = undefined;
-
-if (list.length) {
-    if (list.filter(name => {
-        const filename = path.resolve(currPath, path.join('.', name));
-        const isDir = fs.statSync(filename).isDirectory();
-        return name.indexOf(projectName) !== -1 && isDir;
-    }).length !== 0) {
-        console.log(chalk.red(`【${projectName}】已经存在`));
-        return;
-    }
-    next = Promise.resolve(projectName);
-}
-// else if (rootDir === projectName) {
-//     next = inquirer.prompt([
-//         {
-//             name: 'buildInCurrent',
-//             message: '当前目录为空，且目录名称和项目名称相同，是否直接在当前目录下创建新项目？',
-//             type: 'confirm',
-//             default: true
-//         }
-//     ]).then(answer => {
-//         return Promise.resolve(answer.buildInCurrent ? '.' : projectName)
-//     })
-// }
-else {
-    next = Promise.resolve(projectName)
-}
-
-next && go();
-
-function go() {
-    next.then(projectRoot => {
-        // if (projectRoot !== '.') {
-        //     fs.mkdirSync(projectRoot)
-        // }
-        return download(projectRoot).then(target => {
-            if (moduleName !== 'card') {
-                removeDir(`${currPath}/${projectRoot}/card`);
+const next = inquirer.prompt([
+    {
+        type: 'checkbox',
+        name: 'modules',
+        message: '请选择模块',
+        choices: ['card', 'atom-card', 'view'],
+        // default: ['card'],
+        validate: function (opts) {
+            if (opts.length) {
+                return true;
+            } else {
+                return '至少选择一个模块'
             }
-            if (moduleName !== 'atom-card') {
-                removeDir(`${currPath}/${projectRoot}/atom-card`);
+        }
+    },
+    {
+        type: 'input',
+        name: 'project',
+        message: '请输入目录名',
+        validate: function (input) {
+            if (input) {
+                return true;
+            } else {
+                return '输入不合法';
             }
-            if (moduleName !== 'view') {
-                removeDir(`${currPath}/${projectRoot}/view`);
-            }
-            moveFiles(`${currPath}/${projectRoot}/${moduleName}`, `${currPath}/${projectRoot}`);
-            return {
-                projectRoot,
-                downloadTemp: target
-            }
-        })
-    })
-}
-
-function removeDir(dir) {
-    let files = fs.readdirSync(dir)
-    for (var i = 0; i < files.length; i++) {
-        let newPath = path.join(dir, files[i]);
-        if (fs.statSync(newPath).isDirectory()) {
-            // 如果是文件夹就递归下去
-            removeDir(newPath);
-        } else {
-            // 删除文件
-            fs.unlinkSync(newPath);
         }
     }
-    fs.rmdirSync(dir); // 如果文件夹是空的，就将自己删除掉
+]).then(answer => {
+    return Promise.resolve(answer);
+});
+
+next.then(answer => {
+    createProject(answer.modules, answer.project);
+});
+
+/**
+ * 创建项目
+ * @param {string} mod 模块名
+ * @param {string} pro 项目名
+ */
+function createProject(mods, pro) {
+    const spinner = ora('正在生成项目模板...')
+    spinner.start();
+
+    let src = child_process.execSync('npm config get prefix').toString().trim() + '/bin/vis-cli/template';
+    let dist = root;
+
+    mods.forEach(mod => {
+        if (mod === 'card') {
+            src += `/card`;
+            dist += `/src/card/normal/${pro}`;
+        } else if (mod === 'atom-card') {
+            src += `/atom-card`;
+            dist += `/src/atom-card/${pro}`;
+        } else if (mod === 'view') {
+            src += '/view';
+            dist += `/src/view/${pro}`;
+        }
+    
+        if (fs.existsSync(dist)) {
+            console.log(chalk.red(`【${dist}】已经存在`));
+            return;
+        }
+
+        copyDir(src, dist);
+    });
+
+    spinner.succeed();
 }
 
-function moveFiles(dirFrom, dirTo) {
-    let files = fs.readdirSync(dirFrom)
-    for (let i = 0; i < files.length; i++) {
-        let oldPath = path.join(dirFrom, files[i]);
-        let newPath = path.join(dirTo, files[i]);
-        fs.renameSync(oldPath, newPath);
-    }
-    fs.rmdirSync(dirFrom);
+/**
+ * 复制文件
+ * @param {string} src 源目录
+ * @param {sring} dist 目标目录
+ */
+function copyDir(src, dist) {
+    child_process.spawn('cp', ['-r', src, dist]);
 }

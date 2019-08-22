@@ -1,0 +1,33 @@
+<template>
+    <c-base></c-base>
+</template>
+<script type="config">
+{
+    props: {
+    },
+    data: {
+    },
+    components: {
+        'c-base': '../common/component/base'
+    }
+}
+</script>
+
+<script>
+export default {
+    methods: {
+    },
+    created() {
+    }
+    mounted() {
+    },
+    beforedestroy() {
+    },
+    destroyed() {
+    }
+};
+</script>
+
+<style lang="less" scoped>
+
+</style>
