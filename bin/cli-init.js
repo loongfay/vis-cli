@@ -52,10 +52,12 @@ function createProject(mods, pro) {
     const spinner = ora('正在生成项目模板...')
     spinner.start();
 
-    let src = child_process.execSync('npm config get prefix').toString().trim() + '/lib/node_modules/vis-cli/templates';
-    let dist = root;
+    const from = child_process.execSync('npm config get prefix').toString().trim() + '/lib/node_modules/vis-cli/templates';
 
     mods.forEach(mod => {
+        let src = from
+        let dist = root;
+
         if (mod === 'card') {
             src += `/card`;
             dist += `/src/card/normal/${pro}`;
@@ -66,6 +68,7 @@ function createProject(mods, pro) {
             src += '/view';
             dist += `/src/view/${pro}`;
         }
+        // console.log(src, dist);
 
         const dir = path.dirname(dist);
         if (!fs.existsSync(dir)) {
