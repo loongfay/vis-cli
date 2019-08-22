@@ -21,5 +21,9 @@
     "inquirer": "^6.5.1",
     "ora": "^3.4.0",
     "path": "^0.12.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/izhaolongfei/vis-cli"
   }
 }

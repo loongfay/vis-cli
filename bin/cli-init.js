@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
+const path = require('path');
 const inquirer = require('inquirer');
 const ora = require('ora');
 const chalk = require('chalk');
@@ -65,16 +66,22 @@ function createProject(mods, pro) {
             src += '/view';
             dist += `/src/view/${pro}`;
         }
-    
+
+        const dir = path.dirname(dist);
+        if (!fs.existsSync(dir)) {
+            console.log(chalk.red(`\n路径错误：【${dir}】`));
+            return;
+        }
+
         if (fs.existsSync(dist)) {
-            console.log(chalk.red(`【${dist}】已经存在`));
+            console.log(chalk.red(`\n【${mod}:${pro}】已经存在`));
             return;
         }
 
         copyDir(src, dist);
     });
 
-    spinner.succeed();
+    spinner.succeed('模版创建完毕');
 }
 
 /**
