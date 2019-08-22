@@ -51,7 +51,7 @@ function createProject(mods, pro) {
     const spinner = ora('正在生成项目模板...')
     spinner.start();
 
-    let src = child_process.execSync('npm config get prefix').toString().trim() + '/bin/vis-cli/template';
+    let src = child_process.execSync('npm config get prefix').toString().trim() + '/lib/node_modules/vis-cli/templates';
     let dist = root;
 
     mods.forEach(mod => {
