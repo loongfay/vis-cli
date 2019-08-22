@@ -12,7 +12,7 @@ const next = inquirer.prompt([
         type: 'checkbox',
         name: 'modules',
         message: '请选择模块',
-        choices: ['card', 'atom-card', 'view'],
+        choices: ['card', 'card-atom', 'view'],
         // default: ['card'],
         validate: function (opts) {
             if (opts.length) {
@@ -58,9 +58,9 @@ function createProject(mods, pro) {
         if (mod === 'card') {
             src += `/card`;
             dist += `/src/card/normal/${pro}`;
-        } else if (mod === 'atom-card') {
-            src += `/atom-card`;
-            dist += `/src/atom-card/${pro}`;
+        } else if (mod === 'card-atom') {
+            src += `/card-atom`;
+            dist += `/src/card-atom/${pro}`;
         } else if (mod === 'view') {
             src += '/view';
             dist += `/src/view/${pro}`;
